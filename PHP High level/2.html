@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Casino</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .container {
+            text-align: center;
+            width: 300px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .container button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #28a745;
+            color: #fff;
+            cursor: pointer;
+        }
+        .container button:disabled {
+            background-color: #ccc;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Online Casino</h2>
+        <div>
+            <p>Player's Money: $<span id="playerMoney">10000</span></p>
+            <p>Casino's Money: $<span id="casinoMoney">10000</span></p>
+        </div>
+        <input type="number" id="bet" placeholder="Bet Amount (100-1000)" min="100" max="1000">
+        <input type="number" id="playerNumber" placeholder="Your Number (1-100)" min="1" max="100">
+        <button id="spinButton" onclick="spin()">Spin the Wheel!</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        let playerMoney = 10000;
+        let casinoMoney = 10000;
+
+        function spin() {
+            const bet = parseInt(document.getElementById('bet').value);
+            const playerNumber = parseInt(document.getElementById('playerNumber').value);
+            const resultDiv = document.getElementById('result');
+            if (isNaN(bet) || isNaN(playerNumber) || bet < 100 || bet > 1000 || playerNumber < 1 || playerNumber > 100) {
+                resultDiv.textContent = "Invalid bet amount or number!";
+                return;
+            }
+
+            const casinoNumber = Math.floor(Math.random() * 100) + 1;
+            const difference = Math.abs(playerNumber - casinoNumber);
+            let winAmount = 0;
+            if (difference <= 10) {
+                winAmount = bet * 2;
+            } else if (difference <= 20) {
+                winAmount = bet;
+            } else {
+                winAmount = -bet;
+            }
+
+            playerMoney += winAmount;
+            casinoMoney -= winAmount;
+            resultDiv.textContent = `Casino number: ${casinoNumber}. ` + 
+                (winAmount > 0 ? `You win $${winAmount}!` : `You lose $${-winAmount}.`);
+
+            document.getElementById('playerMoney').textContent = playerMoney;
+            document.getElementById('casinoMoney').textContent = casinoMoney;
+
+            if (playerMoney <= 0) {
+                resultDiv.textContent += " Game over! You lost all your money.";
+                document.getElementById('spinButton').disabled = true;
+            } else if (casinoMoney <= 0) {
+                resultDiv.textContent += " Congratulations! You broke the casino.";
+                document.getElementById('spinButton').disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>
